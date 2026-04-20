@@ -44,12 +44,16 @@ export ANTHROPIC_API_KEY=sk-ant-...
 
 ```bash
 pip install claude-agent-sdk
+
+# application-built-in 예제만 추가로 필요한 선택 의존성
+pip install fastapi uvicorn watchfiles
 ```
 
 ### TypeScript (Bun)
 
 ```bash
 bun add @anthropic-ai/claude-agent-sdk
+# application-built-in 예제는 Bun 내장 기능만 사용하므로 추가 설치 불필요
 ```
 
 > TypeScript SDK는 Claude Code 바이너리를 optional dependency로 번들링한다.
@@ -90,6 +94,15 @@ claude-agent-sdk-usage-example/
 │   ├── README.md
 │   ├── workflow.py
 │   └── workflow.ts
+│
+├── application-built-in/   # 내가 만든 앱에 SDK 심기 — 채팅·SaaS·자동화
+│   ├── README.md
+│   ├── chat_app.py
+│   ├── chat_app.ts
+│   ├── saas_app.py
+│   ├── saas_app.ts
+│   ├── automation_app.py
+│   └── automation_app.ts
 │
 └── utils/              # 공통 유틸리티 (README 없음, 코드 내 주석)
     ├── utils.py
@@ -162,12 +175,21 @@ GATHER → PLAN → EXECUTE → VERIFY → REPORT
 
 README에 지식 보관 수단(벡터DB·그래프DB·RAG), 계획 전략(ReAct·Plan-and-Execute·ToT), 실행 전략(병렬·Map-Reduce·파이프라인), 점검 전략(Critic·반복 루프), 보고 전략(MCP·Webhook·파일) 상세 설명 포함.
 
+### `application-built-in/` — 내 앱에 SDK 심기
+
+기능별 예제를 익힌 뒤, **실제 응용 프로그램에 SDK를 통합하는 방법**을 다룬다.
+
+- 통합 방법 4종: 인프로세스(라이브러리) · 서브프로세스(CLI) · 사이드카(HTTP) · 작업 큐 워커
+- 각 방법의 장단점 · 유의사항 체크리스트
+- "Python/TS 전용" 이라는 오해 해소 — Go · Rust · Java/Kotlin · cURL 4개 언어로 동일 SDK를 호출하는 스니펫
+- 단일 파일 예제 6종: Python · TypeScript × (채팅 웹 앱 · 멀티테넌트 SaaS API · 이벤트 드리븐 자동화)
+
 ---
 
 ## 권장 학습 순서
 
 ```
-just-chat → keep-history → using-tools → with-streaming → with-mcp → with-workflow
+just-chat → keep-history → using-tools → with-streaming → with-mcp → with-workflow → application-built-in
 ```
 
 각 예제는 앞 예제의 개념을 전제로 하지 않아 독립 실행 가능하지만,
@@ -201,9 +223,26 @@ bun run with-streaming/streaming.ts
 # 6. with-workflow  (전체 실행 약 2~5분 소요)
 python with-workflow/workflow.py
 bun run with-workflow/workflow.ts
+
+# 7. application-built-in  (내가 만든 앱에 SDK를 심는 패턴)
+#    HTTP 서버형 예제는 Ctrl+C로 종료. Python·TS 동시 구동 시 포트 충돌에 주의.
+
+# 채팅 웹 앱 — 브라우저 접속: http://localhost:8000
+python application-built-in/chat_app.py
+bun run application-built-in/chat_app.ts
+
+# 멀티테넌트 SaaS API — cURL 시나리오는 application-built-in/README.md 참고
+python application-built-in/saas_app.py          # http://localhost:8001
+bun run application-built-in/saas_app.ts
+
+# 이벤트 드리븐 자동화 — workspace/inbox 감시 → 3건 처리 후 자동 종료
+python application-built-in/automation_app.py
+bun run application-built-in/automation_app.ts
 ```
 
-정상 실행 시 각 예제 마지막에 다음과 같은 라인이 출력된다:
+정상 실행 시 각 예제의 `ResultMessage` 도착 지점마다 아래와 같은 라인이 찍힌다.
+`just-chat` · `with-workflow` 등 CLI 예제는 **stdout 마지막 줄**,
+`application-built-in` 의 HTTP 서버 예제는 **요청마다 서버 로그**에 출력된다.
 
 ```
 [done: success | turns: N | cost: $X.XXXX | session: xxxxxxxxxxxxxxxx...]
@@ -253,6 +292,7 @@ bun run with-workflow/workflow.ts
 ## 참고 자료
 
 - [용어 사전 (jargon.md)](./jargon.md) — SDK 전반의 용어 개념·비유·대체제 정리
+- [application-built-in/README.md](./application-built-in/README.md) — SDK를 내 앱에 심는 4가지 통합 방법 · 언어 중립성 · 구현 체크리스트
 - [Agent SDK 개요](https://code.claude.com/docs/en/agent-sdk/overview)
 - [Python SDK 레퍼런스](https://code.claude.com/docs/en/agent-sdk/python)
 - [TypeScript SDK 레퍼런스](https://code.claude.com/docs/en/agent-sdk/typescript)
