@@ -24,3 +24,4 @@ using-tools/audit.log
 with-workflow/reports/
 with-workflow/workflow_audit.log
 .agent_memory.json
+file-upload/sample_test.png
