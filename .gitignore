@@ -1,0 +1,26 @@
+# 환경 변수
+.env
+.env.local
+
+# Node.js
+node_modules/
+bun.lockb
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+dist/
+
+# Claude SDK 세션 파일
+.claude/
+
+# 예제에서 생성되는 파일
+using-tools/audit.log
+with-workflow/reports/
+with-workflow/workflow_audit.log
+.agent_memory.json
